@@ -16,6 +16,21 @@ from utils import *
 import arguments
 
 
+from prettytable import PrettyTable
+
+
+def count_parameters(model):
+    table = PrettyTable(["Modules", "Parameters"])
+    total_params = 0
+    for name, parameter in model.named_parameters():
+        if not parameter.requires_grad: continue
+        params = parameter.numel()
+        table.add_row([name, params])
+        total_params += params
+    print(table)
+    print(f"Total Trainable Params: {total_params}")
+    return total_params
+
 def cifar_transformer():
     return transforms.Compose([
             transforms.ToTensor(),
@@ -90,7 +105,7 @@ def main(args):
     for split in splits:
         # need to retrain all the models on the new images
         # re initialize and retrain the models
-        task_model = vgg.vgg16_bn(num_classes=args.num_classes)
+        task_model = vgg.vgg11(num_classes=args.num_classes)
         vae = model.VAE(args.latent_dim)
         discriminator = model.Discriminator(args.latent_dim)
 
@@ -98,7 +113,9 @@ def main(args):
         unlabeled_sampler = data.sampler.SubsetRandomSampler(unlabeled_indices)
         unlabeled_dataloader = data.DataLoader(train_dataset, 
                 sampler=unlabeled_sampler, batch_size=args.batch_size, drop_last=False)
-
+        count_parameters(vae)
+        count_parameters(discriminator)
+        count_parameters(task_model)
         # train the models on the current data
         acc, vae, discriminator = solver.train(querry_dataloader,
                                                val_dataloader,
