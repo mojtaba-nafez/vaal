@@ -96,7 +96,7 @@ def main(args):
     args.cuda = args.cuda and torch.cuda.is_available()
     solver = Solver(args, test_dataloader)
 
-    splits = [0.1, 0.15, 0.2]
+    splits = [0.1, 0.15, 0.2, 0.25]
 
     current_indices = list(initial_indices)
 
