@@ -105,7 +105,7 @@ def main(args):
     for split in splits:
         # need to retrain all the models on the new images
         # re initialize and retrain the models
-        task_model = vgg.vgg11(num_classes=args.num_classes)
+        task_model = vgg.vgg16_bn(num_classes=args.num_classes)
         vae = model.VAE(args.latent_dim)
         discriminator = model.Discriminator(args.latent_dim)
 
